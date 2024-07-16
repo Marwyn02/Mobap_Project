@@ -15,11 +15,12 @@ export default function Result1() {
   return (
     <View style={styles.container}>
       <Text className="text-white text-center text-2xl mb-4">
-        Quiz Completed!
+        Quiz 1 Result
       </Text>
       <Text className="text-white text-center text-lg">
         You got {correctAnswersCount} out of {totalQuestions} correct.
       </Text>
+
       {percentage < 80 && (
         <Text className="text-xs text-gray-500 text-center mt-1">
           Unfortunately, you did not pass the quiz as you did not reach the

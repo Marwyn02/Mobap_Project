@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { router } from "expo-router";
-import { Pressable, View, StyleSheet, Text } from "react-native";
+import {
+  Pressable,
+  View,
+  StyleSheet,
+  Text,
+  ImageBackground,
+} from "react-native";
+import Question from "../components/Question";
+import QuestionCount from "../components/QuestionCount";
 
 const getRandomItem = (array, num) => {
   const shuffledArray = array.sort(() => 0.5 - Math.random());
@@ -12,12 +20,15 @@ export default function quiz2() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
   const [isCorrect, setIsCorrect] = useState(null);
+  const [showResult, setShowResult] = useState(false);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
 
   useEffect(() => {
     setQuestions(getRandomItem(data, 10)); // Pick 5 random questions when component mounts
   }, []);
 
   const onAnswer = (answer) => {
+    setSelectedAnswer(true);
     const currentQuestion = questions[currentQuestionIndex];
 
     if (answer === currentQuestion.a) {
@@ -31,13 +42,24 @@ export default function quiz2() {
       setIsCorrect(null);
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setSelectedAnswer(null);
       } else {
-        router.replace({
-          pathname: "/result2",
-          params: { correctAnswersCount, totalQuestions: questions.length },
-        });
+        setShowResult(true);
+        setSelectedAnswer(null);
       }
-    }, 1000); // Clear feedback after 1 second
+    }, 1500); // Clear feedback after 1 second
+  };
+
+  const onShowResult = () => {
+    setTimeout(() => {
+      router.replace({
+        pathname: "/result2",
+        params: {
+          correctAnswersCount,
+          totalQuestions: questions.length,
+        },
+      });
+    }, 1000);
   };
 
   if (questions.length === 0) {
@@ -47,57 +69,74 @@ export default function quiz2() {
   const currentQuestion = questions[currentQuestionIndex];
 
   return (
-    <View style={styles.container}>
-      <Text className="text-white text-center mb-4">
-        Question {currentQuestionIndex + 1} / {questions.length}
-      </Text>
+    <ImageBackground
+      source={require("../../public/q2.gif")}
+      style={styles.backgroundImage}
+      resizeMode="cover"
+    >
+      <Text className="text-2xl font-bold py-10 px-5">Level 2</Text>
+      <View style={styles.container}>
+        <QuestionCount
+          showResult={showResult}
+          currentQuestionIndex={currentQuestionIndex}
+          questions={questions.length}
+          quiz={2}
+        />
 
-      <View className="text-black mb-14 text-center font-bold bg-gray-100 w-screen py-2">
-        <Text className="px-5 py-2">{currentQuestion.q}</Text>
-      </View>
-      <View className="flex flex-row space-x-2 px-20 pt-10 pb-24 bg-white">
-        <Pressable
-          className="mt-5 bg-blue-300 w-full py-2.5 rounded-md"
-          onPress={() => onAnswer("True")}
-        >
-          <Text className="text-xs font-bold text-center text-gray-700">
-            True
-          </Text>
-        </Pressable>
+        {!showResult ? (
+          <>
+            <Question
+              isCorrect={isCorrect}
+              currentQuestion={currentQuestion.q}
+            />
 
-        <Pressable
-          className="mt-5 bg-red-300 w-full py-2.5 rounded-md"
-          onPress={() => onAnswer("False")}
-        >
-          <Text className="text-xs font-bold text-center text-gray-700">
-            False
-          </Text>
-        </Pressable>
+            <View className="flex flex-row pt-5 pb-24 justify-center items-center space-x-2 bg-white w-full">
+              <Pressable
+                className="mt-5 bg-blue-400 active:bg-blue-200 p-2.5 w-44 rounded-full"
+                onPress={() => onAnswer("True")}
+                disabled={selectedAnswer !== null}
+              >
+                <Text className="text-lg text-center text-white">True</Text>
+              </Pressable>
+
+              <Pressable
+                className="mt-5 bg-red-400 active:bg-red-200 p-2.5 w-44 rounded-full"
+                onPress={() => onAnswer("False")}
+                disabled={selectedAnswer !== null}
+              >
+                <Text className="text-lg text-center text-white">False</Text>
+              </Pressable>
+            </View>
+          </>
+        ) : (
+          <View>
+            <Pressable
+              onPress={() => onShowResult()}
+              className="bg-green-600 px-6 py-2.5 mb-10 rounded-full active:bg-green-800 duration-300"
+            >
+              <Text className="text-white font-semibold tracking-wider">
+                Show Result
+              </Text>
+            </Pressable>
+          </View>
+        )}
       </View>
-      {isCorrect === false && (
-        <Text className="text-center text-red-500 font-semibold mt-2">
-          Incorrect answer!
-        </Text>
-      )}
-      {isCorrect === true && (
-        <Text className="text-center text-green-500 font-semibold mt-2">
-          Correct answer!
-        </Text>
-      )}
-    </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
-    justifyContent: "flex-end",
-    alignItems: "center",
-    padding: 32,
-    paddingBottom: 0,
-    fontSize: 64,
-    backgroundColor: "#000",
+    justifyContent: "flex-end", // Align content at the bottom
+    alignItems: "center", // Center content horizontally
+    padding: 0,
+  },
+  backgroundImage: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    justifyContent: "center", // Center content vertically
   },
 });
 
@@ -231,5 +270,80 @@ const data = [
     id: 26,
     q: "In jQuery, the '$' sign is an alias for the 'jQuery' function.",
     a: "True",
+  },
+  {
+    id: 27,
+    q: "PHP supports both procedural and object-oriented programming paradigms.",
+    a: "True",
+  },
+  {
+    id: 28,
+    q: "The `this` keyword in JavaScript always refers to the global object.",
+    a: "False",
+  },
+  {
+    id: 29,
+    q: "JavaScript is a compiled language.",
+    a: "False",
+  },
+  {
+    id: 30,
+    q: "The `typeof` operator can be used to determine the data type of a variable.",
+    a: "True",
+  },
+  {
+    id: 31,
+    q: "The `===` operator checks for both value and type equality.",
+    a: "True",
+  },
+  {
+    id: 32,
+    q: "The `null` and `undefined` values are equal.",
+    a: "False",
+  },
+  {
+    id: 33,
+    q: "JavaScript supports destructuring assignment.",
+    a: "True",
+  },
+  {
+    id: 34,
+    q: "PHP is a case-sensitive language.",
+    a: "False",
+  },
+  {
+    id: 35,
+    q: "The `$_GET` superglobal array is used to collect form data sent with the HTTP GET method.",
+    a: "True",
+  },
+  {
+    id: 36,
+    q: "PHP supports interfaces but not abstract classes.",
+    a: "False",
+  },
+  {
+    id: 37,
+    q: "PHP sessions are stored on the server.",
+    a: "True",
+  },
+  {
+    id: 38,
+    q: "PHP supports namespaces.",
+    a: "True",
+  },
+  {
+    id: 39,
+    q: "The `include` and `require` statements are identical in functionality.",
+    a: "False",
+  },
+  {
+    id: 40,
+    q: "PHP supports error handling using try-catch blocks.",
+    a: "True",
+  },
+  {
+    id: 41,
+    q: "PHP is a compiled language.",
+    a: "False",
   },
 ];

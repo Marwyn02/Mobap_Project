@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { View, Text, StyleSheet, Pressable } from "react-native";
+import { Text, StyleSheet, Pressable } from "react-native";
 import { useState } from "react";
 
 export default function Tab() {
@@ -7,7 +7,7 @@ export default function Tab() {
 
   const pressFunction = () => {
     setContinueMsg(false);
-    setTimeout(() => router.push("/quiz2"), 1000);
+    setTimeout(() => router.push("/quiz5"), 1000);
   };
 
   setTimeout(() => setContinueMsg(true), 3000);
