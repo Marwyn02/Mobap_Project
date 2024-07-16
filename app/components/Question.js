@@ -3,17 +3,17 @@ import { View, Text } from "react-native";
 
 const Question = ({ isCorrect, currentQuestion }) => {
   return (
-    <View className="text-black text-center font-bold bg-gray-100 w-screen">
+    <View className="text-black text-center font-bold bg-white w-screen rounded-t-3xl py-5 px-5">
       {isCorrect === false ? (
-        <Text className="text-center text-red-500 font-semibold text-xl py-2">
+        <Text className="uppercase text-center bg-red-500 text-white rounded-full font-bold text-2xl py-2 tracking-widest">
           Incorrect answer!
         </Text>
       ) : isCorrect === true ? (
-        <Text className="text-center text-green-500 font-semibold text-xl py-2">
+        <Text className="uppercase text-center bg-green-500 rounded-full text-white font-bold text-2xl py-2 tracking-widest">
           Correct answer!
         </Text>
       ) : (
-        <Text className="px-5 py-2 text-lg">{currentQuestion}</Text>
+        <Text className="py-2 text-lg">{currentQuestion}</Text>
       )}
     </View>
   );

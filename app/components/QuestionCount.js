@@ -10,7 +10,7 @@ const QuestionCount = ({
   return (
     <>
       {!showResult ? (
-        <Text className="text-white text-center mb-4 font-bold text-lg">
+        <Text className="text-black text-center mb-4 font-bold bg-white rounded-full px-3 py-0.5">
           Question {currentQuestionIndex + 1} / {questions}
         </Text>
       ) : (
