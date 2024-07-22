@@ -87,7 +87,7 @@ export default function Quiz1() {
   const currentQuestion = questions[currentQuestionIndex];
   return (
     <ImageBackground
-      source={require("../../public/q1.gif")}
+      source={require("../../public/Scene1.gif")}
       style={styles.backgroundImage}
       resizeMode="cover"
     >

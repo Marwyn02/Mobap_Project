@@ -76,7 +76,7 @@ export default function Quiz3() {
 
   return (
     <ImageBackground
-      source={require("../../public/q1.gif")}
+      source={require("../../public/Scene3.gif")}
       style={styles.backgroundImage}
       resizeMode="cover"
     >

@@ -7,7 +7,7 @@ export default function Tab() {
 
   const pressFunction = () => {
     setContinueMsg(false);
-    setTimeout(() => router.push("/quiz5"), 1000);
+    setTimeout(() => router.push("/quiz6"), 1000);
   };
 
   setTimeout(() => setContinueMsg(true), 3000);

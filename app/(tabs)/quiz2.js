@@ -70,7 +70,7 @@ export default function quiz2() {
 
   return (
     <ImageBackground
-      source={require("../../public/q2.gif")}
+      source={require("../../public/Scene2.gif")}
       style={styles.backgroundImage}
       resizeMode="cover"
     >

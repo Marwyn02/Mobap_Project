@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   ImageBackground,
   View,
@@ -6,9 +6,321 @@ import {
   Pressable,
   StyleSheet,
   Alert,
+  Modal,
+  Image,
+  Animated,
+  Easing,
 } from "react-native";
 import Question from "../components/Question";
 import { router } from "expo-router";
+
+const finalDeletionQuery = "DROP WORLDbase"; // Example final deletion query
+const userDeletionQuery = "DELETE 'Glitch King' FROM WORLDbase";
+// const userDeletionQuery = "D";
+
+export default function FinalBossBattle() {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [deletionQuery, setDeletionQuery] = useState("");
+  const [userQuery, setUserQuery] = useState("");
+  const [isCorrect, setIsCorrect] = useState(null);
+  const [selectedAnswer, setSelectedAnswer] = useState(null);
+  const [score, setScore] = useState(0);
+  const [gameCompleted, setGameCompleted] = useState(false);
+  const [showModal, setShowModal] = useState(true);
+  const [timeLeft, setTimeLeft] = useState(15);
+  const [showGif, setShowGif] = useState(null);
+  const [redScreenOpacity, setRedScreenOpacity] = useState(0); // Opacity of the red screen
+  const fadeAnim = useRef(new Animated.Value(0)).current; // For red screen animation
+
+  useEffect(() => {
+    if (!showModal && timeLeft > 0 && !selectedAnswer) {
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
+    } else if (timeLeft === 0) {
+      handleTimeout();
+    }
+  }, [timeLeft, selectedAnswer, showModal]);
+
+  useEffect(() => {
+    if (redScreenOpacity > 0) {
+      Animated.timing(fadeAnim, {
+        toValue: redScreenOpacity,
+        duration: 500,
+        easing: Easing.ease,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [redScreenOpacity]);
+
+  const handleTimeout = () => {
+    if (!selectedAnswer) {
+      setRedScreenOpacity((prev) => Math.min(prev + 0.1, 1)); // Increase opacity
+      handleAnswerSelection(null, null, true);
+    }
+  };
+
+  const handleAnswerSelection = (key, selectedOption, timeout = false) => {
+    if (gameCompleted) return;
+
+    const correctAnswer = questions[currentQuestionIndex].correctAnswer;
+
+    if (deletionQuery === finalDeletionQuery) {
+      setGameCompleted(true);
+      Alert.alert("You failed!", "Glitch king deleted the worldbase.");
+      return;
+    } else if (userQuery === userDeletionQuery) {
+      setGameCompleted(true);
+      playWinningSequence();
+      return;
+    }
+
+    const nextLetterBoss = finalDeletionQuery[deletionQuery.length];
+    const nextLetterUser = userDeletionQuery[userQuery.length];
+
+    setSelectedAnswer(key);
+
+    if (timeout || selectedOption !== correctAnswer) {
+      // If the user's answer is WRONG
+      setRedScreenOpacity((prev) => Math.min(prev + 0.1, 1)); // Increase opacity
+      setIsCorrect(false);
+      setDeletionQuery(deletionQuery + nextLetterBoss);
+      setTimeout(() => {
+        setIsCorrect(null);
+        if (currentQuestionIndex < questions.length - 1) {
+          setCurrentQuestionIndex(currentQuestionIndex + 1);
+          setSelectedAnswer(null);
+          setTimeLeft(15);
+        } else {
+          Alert.alert("Game Over", "No more questions left.");
+          setSelectedAnswer(null);
+        }
+      }, 2000);
+    } else {
+      // If the user's answer is CORRECT
+      setIsCorrect(true);
+      setUserQuery(userQuery + nextLetterUser);
+      setScore(score + 1);
+      setTimeout(() => {
+        setIsCorrect(null);
+        if (currentQuestionIndex < questions.length - 1) {
+          setCurrentQuestionIndex(currentQuestionIndex + 1);
+          setSelectedAnswer(null);
+          setTimeLeft(15);
+        } else {
+          Alert.alert("Game Over", "No more questions left.");
+          setSelectedAnswer(null);
+        }
+      }, 2000);
+    }
+  };
+
+  const playWinningSequence = () => {
+    setShowGif("Scene5");
+    setTimeout(() => {
+      setShowGif("congratulationsAndCredits");
+      setTimeout(() => {
+        router.replace("/end");
+      }, 15000); // 9 seconds for congratulations.gif and credits.gif
+    }, 7000); // 9 seconds for Scene5.gif
+  };
+
+  return (
+    <ImageBackground
+      source={require("../../public/boss.jpg")}
+      style={styles.backgroundImage}
+      resizeMode="cover"
+    >
+      <Modal
+        visible={showModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowModal(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text className="text-lg mb-3 font-semibold">
+              Are you ready to face the Glitch King?
+            </Text>
+            <Pressable
+              className="px-8 py-4 rounded-md bg-orange-400 active:bg-orange-500"
+              onPress={() => setShowModal(false)}
+            >
+              <Text className="text-white font-semibold">Start Battle</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
+
+      {redScreenOpacity > 0 && (
+        <Animated.View style={[styles.redScreen, { opacity: fadeAnim }]}>
+          <View style={styles.redScreenOverlay} />
+        </Animated.View>
+      )}
+
+      {showGif ? (
+        <View style={styles.gifContainer}>
+          {showGif === "Scene5" && (
+            <ImageBackground
+              source={require("../../public/Scene5.gif")}
+              style={styles.gifBackground}
+              resizeMode="cover"
+            />
+          )}
+          {showGif === "congratulationsAndCredits" && (
+            <>
+              <Image
+                source={require("../../public/Congratulations.gif")}
+                style={styles.halfScreenGif}
+                resizeMode="cover"
+              />
+              <Image
+                source={require("../../public/Credits.mp4")}
+                style={styles.halfScreenGif}
+                resizeMode="cover"
+              />
+            </>
+          )}
+        </View>
+      ) : (
+        !showModal && (
+          <View style={styles.container}>
+            <View className="flex flex-col justify-center items-center py-10 px-5">
+              {/* Boss Health */}
+              <View className="py-2">
+                <Text className="text-center text-2xl font-bold text-black uppercase">
+                  Glitch King
+                </Text>
+              </View>
+              <View className="bg-white px-4 py-1 rounded-full">
+                <Text className="font-bold tracking-widest">
+                  {deletionQuery}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.container}>
+              <View className="flex flex-col justify-center items-center p-5">
+                {/* Your Health */}
+                <View>
+                  <Text className="text-center text-xl font-bold text-blue-600 tracking-widest">
+                    YOU
+                  </Text>
+                </View>
+                <View className="bg-white px-4 py-1 rounded-full">
+                  <Text className="font-bold tracking-widest text-cyan-600">
+                    {userQuery}
+                  </Text>
+                </View>
+                <Text style={styles.timerText}>{timeLeft} seconds left</Text>
+              </View>
+
+              {!gameCompleted ? (
+                <View>
+                  <Question
+                    isCorrect={isCorrect}
+                    currentQuestion={questions[currentQuestionIndex].question}
+                  />
+                  <View className="bg-white flex flex-col flex-wrap gap-y-2 py-6 px-3">
+                    {questions[currentQuestionIndex].options.map(
+                      (option, index) => (
+                        <View key={index} className="p-1 w-full">
+                          <Pressable
+                            className={`
+                            bg-white border border-gray-500 flex flex-row items-center py-2 px-3 rounded-full active:bg-blue-50 w-full ${
+                              selectedAnswer === index && isCorrect === true
+                                ? "bg-green-400 border-green-400"
+                                : isCorrect === false &&
+                                  selectedAnswer === index
+                                ? "bg-red-400 border-red-400"
+                                : ""
+                            }`}
+                            onPress={() => handleAnswerSelection(index, option)}
+                            disabled={selectedAnswer !== null}
+                          >
+                            <Text className="text-center text-black text-base">
+                              {option}
+                            </Text>
+                          </Pressable>
+                        </View>
+                      )
+                    )}
+                  </View>
+                </View>
+              ) : (
+                <View>
+                  <Pressable
+                    onPress={() => router.replace("/end")}
+                    className="bg-green-600 px-6 py-2.5 mb-10 rounded-full active:bg-green-800 duration-300"
+                  >
+                    <Text className="text-white font-semibold tracking-wider">
+                      Show Result
+                    </Text>
+                  </Pressable>
+                </View>
+              )}
+            </View>
+          </View>
+        )
+      )}
+    </ImageBackground>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "flex-end",
+    alignItems: "center",
+    padding: 0,
+  },
+  backgroundImage: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  timerText: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 18,
+    marginTop: 10,
+  },
+  gifContainer: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+  },
+  gifBackground: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+  },
+  halfScreenGif: {
+    width: "100%",
+    height: "50%",
+  },
+  redScreenOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(255, 0, 0, 0.5)", // Red overlay
+  },
+  redScreen: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+});
 
 const questions = [
   {
@@ -474,154 +786,3 @@ const questions = [
     correctAnswer: "To define project dependencies and configurations",
   },
 ];
-
-const finalDeletionQuery = "DROP WORLDbase"; // Example final deletion query
-const userDeletionQuery = "DELETE 'Glitch king' FROM bug"; // Hypothetical user deletion query
-
-export default function FinalBossBattle() {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [deletionQuery, setDeletionQuery] = useState("");
-  const [userQuery, setUserQuery] = useState("");
-  const [isCorrect, setIsCorrect] = useState(null); // If its correct or incorrect
-  const [selectedAnswer, setSelectedAnswer] = useState(null); // Tracks the user answer to condition it on the selection
-  const [score, setScore] = useState(0);
-  const [gameCompleted, setGameCompleted] = useState(false); // Track if game is completed
-
-  const handleAnswerSelection = (key, selectedOption) => {
-    if (gameCompleted) return; // Exit if game is already completed
-
-    const correctAnswer = questions[currentQuestionIndex].correctAnswer;
-
-    // Check if deletion query is completed
-    if (deletionQuery === finalDeletionQuery) {
-      setGameCompleted(true); // Mark game as completed
-      Alert.alert("You failed!", "Glitch king deleted the worldbase.");
-      return;
-    } else if (userQuery === userDeletionQuery) {
-      setGameCompleted(true); // Mark game as completed
-
-      Alert.alert(
-        "Congratulations!",
-        "You defeated the glitch king and protected the worldbase"
-      );
-      return;
-    }
-
-    const nextLetterBoss = finalDeletionQuery[deletionQuery.length]; // Get the next letter from the final deletion query
-    const nextLetterUser = userDeletionQuery[userQuery.length]; // Get the next letter from the user deletion query
-
-    setSelectedAnswer(key);
-    if (selectedOption === correctAnswer) {
-      setUserQuery(userQuery + nextLetterUser);
-      setIsCorrect(true);
-      setScore(score + 1);
-    } else {
-      setIsCorrect(false);
-      setDeletionQuery(deletionQuery + nextLetterBoss);
-      // Handle incorrect answer (could penalize, skip question, etc.)
-    }
-
-    setTimeout(() => {
-      setIsCorrect(null);
-      if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-        setSelectedAnswer(null);
-      } else {
-        // Handle no more questions case (optional)
-        Alert.alert("Game Over", "No more questions left.");
-        setSelectedAnswer(null);
-      }
-    }, 1500);
-  };
-
-  return (
-    <ImageBackground
-      source={require("../../public/q1.gif")}
-      style={styles.backgroundImage}
-      resizeMode="cover"
-    >
-      <View className="flex flex-col justify-center items-center py-10 px-5">
-        {/* Boss Health */}
-        <View>
-          <Text className="text-center text-2xl font-bold text-red-900 tracking-wider">
-            BOSS
-          </Text>
-          <View className="bg-white px-4 py-1 rounded-full">
-            <Text className="font-bold tracking-widest">{deletionQuery}</Text>
-          </View>
-        </View>
-      </View>
-      <View style={styles.container}>
-        <View className="flex flex-col justify-center items-center p-5">
-          {/* Your Health */}
-          <View>
-            <Text className="text-center text-xl font-bold text-blue-600 tracking-widest">
-              YOU
-            </Text>
-            <View className="bg-white px-4 py-1 rounded-full">
-              <Text className="font-bold tracking-widest text-cyan-600">
-                {userQuery}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        {!gameCompleted ? (
-          <View>
-            <Question
-              isCorrect={isCorrect}
-              currentQuestion={questions[currentQuestionIndex].question}
-            />
-            <View className="bg-white flex flex-col flex-wrap gap-y-2 py-6 px-3">
-              {questions[currentQuestionIndex].options.map((option, index) => (
-                <View key={index} className="p-1 w-full">
-                  <Pressable
-                    className={`bg-white border border-gray-500 flex flex-row items-center py-2 px-3 rounded-full active:bg-blue-50 w-full ${
-                      selectedAnswer === index && isCorrect === true
-                        ? "bg-green-400 border-green-400"
-                        : isCorrect === false && selectedAnswer === index
-                        ? "bg-red-400 border-red-400"
-                        : ""
-                    }`}
-                    onPress={() => handleAnswerSelection(index, option)}
-                    disabled={selectedAnswer !== null}
-                  >
-                    <Text className="text-center text-black text-base">
-                      {option}
-                    </Text>
-                  </Pressable>
-                </View>
-              ))}
-            </View>
-          </View>
-        ) : (
-          <View>
-            <Pressable
-              onPress={() => router.replace("/end")}
-              className="bg-green-600 px-6 py-2.5 mb-10 rounded-full active:bg-green-800 duration-300"
-            >
-              <Text className="text-white font-semibold tracking-wider">
-                Show Result
-              </Text>
-            </Pressable>
-          </View>
-        )}
-      </View>
-    </ImageBackground>
-  );
-}
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "flex-end", // Align content at the bottom
-    alignItems: "center", // Center content horizontally
-    padding: 0,
-  },
-  backgroundImage: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-    justifyContent: "center", // Center content vertically
-  },
-});
