@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import Question from "../components/Question";
 import QuestionCount from "../components/QuestionCount";
+import Level from "../components/Level";
+import ResultButton from "../components/ResultButton";
 
 const getRandomItem = (array, num) => {
   const shuffledArray = array.sort(() => 0.5 - Math.random());
@@ -24,7 +26,7 @@ export default function quiz2() {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
 
   useEffect(() => {
-    setQuestions(getRandomItem(data, 10)); // Pick 5 random questions when component mounts
+    setQuestions(getRandomItem(data, 1)); // Pick 5 random questions when component mounts
   }, []);
 
   const onAnswer = (answer) => {
@@ -74,7 +76,7 @@ export default function quiz2() {
       style={styles.backgroundImage}
       resizeMode="cover"
     >
-      <Text className="text-2xl font-bold py-10 px-5">Level 2</Text>
+      <Level level={2} />
       <View style={styles.container}>
         <QuestionCount
           showResult={showResult}
@@ -109,16 +111,7 @@ export default function quiz2() {
             </View>
           </>
         ) : (
-          <View>
-            <Pressable
-              onPress={() => onShowResult()}
-              className="bg-green-600 px-6 py-2.5 mb-10 rounded-full active:bg-green-800 duration-300"
-            >
-              <Text className="text-white font-semibold tracking-wider">
-                Show Result
-              </Text>
-            </Pressable>
-          </View>
+          <ResultButton doPress={onShowResult} />
         )}
       </View>
     </ImageBackground>
@@ -129,7 +122,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-end", // Align content at the bottom
-    alignItems: "center", // Center content horizontally
     padding: 0,
   },
   backgroundImage: {

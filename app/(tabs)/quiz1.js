@@ -11,6 +11,7 @@ import {
 import Question from "../components/Question";
 import QuestionCount from "../components/QuestionCount";
 import Level from "../components/Level";
+import ResultButton from "../components/ResultButton";
 
 // Get RANDOM questions from the data questions
 const getRandomItem = (array, num) => {
@@ -160,16 +161,7 @@ export default function Quiz1() {
             </View>
           </View>
         ) : (
-          <View>
-            <Pressable
-              onPress={() => onShowResult()}
-              className="bg-green-600 px-6 py-2.5 mb-14 mx-20 rounded-full active:bg-green-800 duration-300"
-            >
-              <Text className="text-white text-center font-semibold tracking-wider">
-                Show Result
-              </Text>
-            </Pressable>
-          </View>
+          <ResultButton doPress={onShowResult} />
         )}
       </View>
     </ImageBackground>
