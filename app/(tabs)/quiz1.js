@@ -7,6 +7,7 @@ import {
   ImageBackground,
   Pressable,
 } from "react-native";
+
 import Question from "../components/Question";
 import QuestionCount from "../components/QuestionCount";
 import Level from "../components/Level";
@@ -61,7 +62,7 @@ export default function Quiz1() {
   // Submit selected choice
   const onChoiceSelect = (key, selectedChoice) => {
     if (questions.length === 0) return;
-    setSelectedAnswer(key);
+    setSelectedAnswer(key); // Fetch the players answer key
 
     const currentQuestion = questions[currentQuestionIndex];
     const correctAnswer = currentQuestion.a;
@@ -73,10 +74,10 @@ export default function Quiz1() {
       ) {
         setIsCorrect(true);
 
-        setCorrectAnswersCount((prevCount) => prevCount + 1);
+        setCorrectAnswersCount((prevCount) => prevCount + 1); // Add score to the player
       } else {
         setIsCorrect(false);
-        setCorrectAnswer(correctAnswer);
+        setCorrectAnswer(correctAnswer); // Show the correct answer if the player gets the wrong answer
       }
     } else {
       setIsCorrect(false);
@@ -85,7 +86,7 @@ export default function Quiz1() {
     setTimeout(() => {
       setIsCorrect(null);
       if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setCurrentQuestionIndex(currentQuestionIndex + 1); // Proceeds to the next question
         setSelectedAnswer(null);
         setCorrectAnswer(null);
       } else {
@@ -95,6 +96,7 @@ export default function Quiz1() {
     }, 1500);
   };
 
+  // Query to route to the result page
   const onShowResult = () => {
     setTimeout(() => {
       router.replace({
