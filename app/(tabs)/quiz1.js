@@ -154,7 +154,7 @@ export default function Quiz1() {
                   className={`bg-white border border-gray-500 flex flex-row items-center py-1 rounded-full active:bg-blue-50 w-full ${
                     selectedAnswer === index && correctAnswer === null
                       ? "bg-green-400 border-green-400"
-                      : correctAnswer === index
+                      : correctAnswer === choice
                       ? "bg-green-400 border-green-400"
                       : ""
                   } `}
@@ -436,7 +436,7 @@ const data = [
     id: 34,
     q: "Which built-in method returns the length of a string?",
     c: ["length()", "len()", "size()", "length"],
-    a: "length",
+    a: "length()",
   },
   {
     id: 35,

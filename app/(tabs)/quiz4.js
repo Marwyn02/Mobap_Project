@@ -112,14 +112,14 @@ export default function quiz4() {
               currentQuestion={currentQuestion.q}
             />
 
-            <View className="bg-white px-20 pt-10 pb-24">
+            <View className="bg-white px-5 pt-10 pb-24">
               <TextInput
                 multiline
                 value={value}
                 onChangeText={setValue}
                 placeholder="Enter your answer here"
                 blurOnSubmit={true}
-                className={`bg-gray-200 border border-black px-5 py-3.5 text-lg text-black w-[375px] rounded-full duration-300 ${
+                className={`bg-gray-200 border border-black px-5 py-3.5 mx-0 text-lg text-black w-[375px] rounded-md duration-300 ${
                   value.length > 30 && "rounded-lg"
                 }`}
               />
