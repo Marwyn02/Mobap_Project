@@ -7,18 +7,48 @@ import {
   StyleSheet,
   Alert,
   Modal,
-  Image,
   Animated,
   Easing,
 } from "react-native";
 import Question from "../components/Question";
 import { router } from "expo-router";
+import ResultButton from "../components/ResultButton";
 
-const finalDeletionQuery = "DROP WORLDbase"; // Example final deletion query
+const finalDeletionQuery = "DROP WORLDbase";
 const userDeletionQuery = "DELETE 'Glitch King' FROM WORLDbase";
-// const userDeletionQuery = "D";
+// const finalDeletionQuery = "DR";
+// const userDeletionQuery = "DE";
+
+// Get RANDOM questions from the data questions
+const getRandomItem = (array, num) => {
+  const shuffledArray = array.sort(() => 0.5 - Math.random());
+  return shuffledArray.slice(0, num);
+};
+
+// Shuffle the question choices
+const shuffle = (array) => {
+  let currentIndex = array.length,
+    randomIndex;
+
+  // While there remain elements to shuffle.
+  while (currentIndex !== 0) {
+    // Pick a remaining element.
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex--;
+
+    // And swap it with the current element.
+    [array[currentIndex], array[randomIndex]] = [
+      array[randomIndex],
+      array[currentIndex],
+    ];
+  }
+
+  return array;
+};
 
 export default function FinalBossBattle() {
+  const [questions, setQuestions] = useState([]);
+  const [shuffledChoices, setShuffledChoices] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [deletionQuery, setDeletionQuery] = useState("");
   const [userQuery, setUserQuery] = useState("");
@@ -32,6 +62,19 @@ export default function FinalBossBattle() {
   const [redScreenOpacity, setRedScreenOpacity] = useState(0); // Opacity of the red screen
   const fadeAnim = useRef(new Animated.Value(0)).current; // For red screen animation
 
+  // Pick 49 questions in random when component mounts
+  useEffect(() => {
+    setQuestions(getRandomItem(data, 49));
+  }, []);
+
+  // Shuffle the 3 choices in every questions
+  useEffect(() => {
+    if (questions.length > 0) {
+      setShuffledChoices(shuffle([...questions[currentQuestionIndex].options]));
+    }
+  }, [questions, currentQuestionIndex]);
+
+  // 15 seconds timer per questions
   useEffect(() => {
     if (!showModal && timeLeft > 0 && !selectedAnswer) {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
@@ -41,6 +84,7 @@ export default function FinalBossBattle() {
     }
   }, [timeLeft, selectedAnswer, showModal]);
 
+  // Increasing redness of the screen everytime the player gets wrong answer
   useEffect(() => {
     if (redScreenOpacity > 0) {
       Animated.timing(fadeAnim, {
@@ -52,78 +96,102 @@ export default function FinalBossBattle() {
     }
   }, [redScreenOpacity]);
 
+  // Increasing redness opacity for the screen function
   const handleTimeout = () => {
     if (!selectedAnswer) {
-      setRedScreenOpacity((prev) => Math.min(prev + 0.1, 1)); // Increase opacity
+      setRedScreenOpacity((prev) => Math.min(prev + 0.1, 1));
       handleAnswerSelection(null, null, true);
     }
   };
 
+  // Submits the player answer
   const handleAnswerSelection = (key, selectedOption, timeout = false) => {
     if (gameCompleted) return;
 
-    const correctAnswer = questions[currentQuestionIndex].correctAnswer;
-
-    if (deletionQuery === finalDeletionQuery) {
-      setGameCompleted(true);
-      Alert.alert("You failed!", "Glitch king deleted the worldbase.");
-      return;
-    } else if (userQuery === userDeletionQuery) {
-      setGameCompleted(true);
-      playWinningSequence();
-      return;
-    }
+    const currentQuestion = questions[currentQuestionIndex];
+    const correctAnswer = currentQuestion.correctAnswer;
+    setTimeLeft(null);
 
     const nextLetterBoss = finalDeletionQuery[deletionQuery.length];
     const nextLetterUser = userDeletionQuery[userQuery.length];
 
     setSelectedAnswer(key);
 
-    if (timeout || selectedOption !== correctAnswer) {
-      // If the user's answer is WRONG
-      setRedScreenOpacity((prev) => Math.min(prev + 0.1, 1)); // Increase opacity
-      setIsCorrect(false);
-      setDeletionQuery(deletionQuery + nextLetterBoss);
-      setTimeout(() => {
-        setIsCorrect(null);
-        if (currentQuestionIndex < questions.length - 1) {
-          setCurrentQuestionIndex(currentQuestionIndex + 1);
-          setSelectedAnswer(null);
-          setTimeLeft(15);
-        } else {
-          Alert.alert("Game Over", "No more questions left.");
-          setSelectedAnswer(null);
-        }
-      }, 2000);
+    if (timeout || selectedOption !== null) {
+      if (selectedOption === correctAnswer) {
+        setIsCorrect(true);
+        setUserQuery(userQuery + nextLetterUser);
+        setScore(score + 1); // No score i guess
+      } else {
+        // If the user's answer is WRONG
+        setRedScreenOpacity((prev) => Math.min(prev + 0.1, 1)); // Increase opacity everytime the player loses
+        setIsCorrect(false);
+        setDeletionQuery(deletionQuery + nextLetterBoss); // Add query to the boss
+      }
     } else {
-      // If the user's answer is CORRECT
-      setIsCorrect(true);
-      setUserQuery(userQuery + nextLetterUser);
-      setScore(score + 1);
-      setTimeout(() => {
-        setIsCorrect(null);
-        if (currentQuestionIndex < questions.length - 1) {
-          setCurrentQuestionIndex(currentQuestionIndex + 1);
-          setSelectedAnswer(null);
-          setTimeLeft(15);
-        } else {
-          Alert.alert("Game Over", "No more questions left.");
-          setSelectedAnswer(null);
-        }
-      }, 2000);
+      setIsCorrect(false);
     }
+
+    setTimeout(() => {
+      setIsCorrect(null);
+      if (currentQuestionIndex < questions.length - 1) {
+        setCurrentQuestionIndex(currentQuestionIndex + 1); // Proceed to next question
+        setSelectedAnswer(null);
+        setTimeLeft(15);
+      } else {
+        Alert.alert("Game Over", "No more questions left.");
+        setSelectedAnswer(null);
+      }
+    }, 1500);
   };
 
+  // Proceed to the result page to see the score
+  const onShowResult = () => {
+    setTimeout(() => {
+      router.replace("/end");
+    }, 1000);
+  };
+
+  // Play the lossing gif animation if the player losses
+  const playLossingSequence = () => {
+    setShowGif("Scene5");
+    setTimeout(() => {
+      router.replace("/lost");
+    }, 5000); // 9 seconds for Scene5.gif
+  };
+
+  // Play the winning gif animation if the player wins
   const playWinningSequence = () => {
     setShowGif("Scene5");
     setTimeout(() => {
-      setShowGif("congratulationsAndCredits");
-      setTimeout(() => {
-        router.replace("/end");
-      }, 15000); // 9 seconds for congratulations.gif and credits.gif
-    }, 7000); // 9 seconds for Scene5.gif
+      router.replace("/end");
+    }, 9000); // 9 seconds for Scene5.gif
   };
 
+  // Validate the query of the boss and player
+  useEffect(() => {
+    if (gameCompleted) return; // Exit early if the game is already completed
+
+    setTimeout(() => {
+      if (deletionQuery === finalDeletionQuery) {
+        // If the boss query is complete
+        setGameCompleted(true);
+        playLossingSequence();
+      } else if (userQuery === userDeletionQuery) {
+        // If the player query is complete
+        setGameCompleted(true);
+        playWinningSequence();
+      }
+    }, 1500);
+  }, [
+    deletionQuery,
+    finalDeletionQuery,
+    userQuery,
+    userDeletionQuery,
+    gameCompleted,
+  ]);
+
+  const currentQuestion = questions[currentQuestionIndex];
   return (
     <ImageBackground
       source={require("../../public/boss.jpg")}
@@ -166,66 +234,55 @@ export default function FinalBossBattle() {
               resizeMode="cover"
             />
           )}
-          {showGif === "congratulationsAndCredits" && (
-            <>
-              <Image
-                source={require("../../public/Congratulations.gif")}
-                style={styles.halfScreenGif}
-                resizeMode="cover"
-              />
-              <Image
-                source={require("../../public/Credits.mp4")}
-                style={styles.halfScreenGif}
-                resizeMode="cover"
-              />
-            </>
-          )}
         </View>
       ) : (
         !showModal && (
           <View style={styles.container}>
-            <View className="flex flex-col justify-center items-center py-10 px-5">
+            <View className="flex flex-col justify-center items-center gap-y-2 py-10 px-5">
               {/* Boss Health */}
-              <View className="py-2">
-                <Text className="text-center text-2xl font-bold text-black uppercase">
-                  Glitch King
-                </Text>
-              </View>
-              <View className="bg-white px-4 py-1 rounded-full">
-                <Text className="font-bold tracking-widest">
-                  {deletionQuery}
-                </Text>
-              </View>
+              <Text className="text-center text-lg font-bold text-red-900 bg-red-200 rounded-full tracking-wide px-3 py-0.5">
+                Glitch King
+              </Text>
+
+              <Text className="text-sm text-red-600 font-bold tracking-widest bg-white px-3 py-0.5 rounded-full">
+                {deletionQuery}
+              </Text>
             </View>
+
             <View style={styles.container}>
-              <View className="flex flex-col justify-center items-center p-5">
-                {/* Your Health */}
-                <View>
-                  <Text className="text-center text-xl font-bold text-blue-600 tracking-widest">
-                    YOU
+              {/* Player health bar */}
+              <View className="flex flex-col justify-center items-center space-y-2 p-3">
+                <View className="flex flex-row bg-white rounded-full px-2 py-0.5">
+                  <Text className="text-sm font-bold text-blue-600 mr-2">
+                    Your Query:
                   </Text>
+                  <Text className="text-black font-bold">{userQuery}</Text>
                 </View>
-                <View className="bg-white px-4 py-1 rounded-full">
-                  <Text className="font-bold tracking-widest text-cyan-600">
-                    {userQuery}
-                  </Text>
-                </View>
-                <Text style={styles.timerText}>{timeLeft} seconds left</Text>
+
+                <Text className="text-black text-center font-bold bg-white rounded-full px-3 py-0.5">
+                  {timeLeft !== null
+                    ? timeLeft > 1
+                      ? `${timeLeft} seconds left`
+                      : timeLeft < 2
+                      ? `${timeLeft} second left`
+                      : ""
+                    : "Loading..."}
+                </Text>
               </View>
 
               {!gameCompleted ? (
                 <View>
                   <Question
                     isCorrect={isCorrect}
-                    currentQuestion={questions[currentQuestionIndex].question}
+                    currentQuestion={currentQuestion.question}
                   />
+
                   <View className="bg-white flex flex-col flex-wrap gap-y-2 py-6 px-3">
-                    {questions[currentQuestionIndex].options.map(
-                      (option, index) => (
-                        <View key={index} className="p-1 w-full">
-                          <Pressable
-                            className={`
-                            bg-white border border-gray-500 flex flex-row items-center py-2 px-3 rounded-full active:bg-blue-50 w-full ${
+                    {shuffledChoices.map((option, index) => (
+                      <Pressable
+                        key={index}
+                        className={`
+                            h-auto bg-white border border-gray-500 flex flex-row items-center py-1 rounded-full active:bg-blue-50 w-[380px] ${
                               selectedAnswer === index && isCorrect === true
                                 ? "bg-green-400 border-green-400"
                                 : isCorrect === false &&
@@ -233,29 +290,27 @@ export default function FinalBossBattle() {
                                 ? "bg-red-400 border-red-400"
                                 : ""
                             }`}
-                            onPress={() => handleAnswerSelection(index, option)}
-                            disabled={selectedAnswer !== null}
-                          >
-                            <Text className="text-center text-black text-base">
-                              {option}
-                            </Text>
-                          </Pressable>
-                        </View>
-                      )
-                    )}
+                        onPress={() => handleAnswerSelection(index, option)}
+                        disabled={selectedAnswer !== null}
+                      >
+                        <Text className="uppercase text-center text-green-600 font-medium text-base bg-green-200 px-3.5 py-1.5 rounded-full ml-2 mr-3">
+                          {String.fromCharCode(65 + index)}
+                        </Text>
+                        {option.length > 25 ? (
+                          <Text className="text-start text-black text-xs flex flex-wrap w-[300px] mr-5">
+                            {option}
+                          </Text>
+                        ) : (
+                          <Text className="text-start text-black text-base">
+                            {option}
+                          </Text>
+                        )}
+                      </Pressable>
+                    ))}
                   </View>
                 </View>
               ) : (
-                <View>
-                  <Pressable
-                    onPress={() => router.replace("/end")}
-                    className="bg-green-600 px-6 py-2.5 mb-10 rounded-full active:bg-green-800 duration-300"
-                  >
-                    <Text className="text-white font-semibold tracking-wider">
-                      Show Result
-                    </Text>
-                  </Pressable>
-                </View>
+                <ResultButton doPress={onShowResult} />
               )}
             </View>
           </View>
@@ -322,7 +377,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const questions = [
+const data = [
   {
     question: "What is a blockchain?",
     options: [
