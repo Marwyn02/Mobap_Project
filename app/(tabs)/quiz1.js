@@ -69,14 +69,16 @@ export default function Quiz1() {
     const correctAnswer = currentQuestion.a;
 
     if (selectedChoice !== null) {
+      // Check if the player chooses an answer
       if (
         selectedChoice.trim().toLowerCase() ===
-        correctAnswer.trim().toLowerCase()
+        correctAnswer.trim().toLowerCase() // Check if the player answer is the same with the answer key
       ) {
+        // If player answer is correct
         setIsCorrect(true);
-
         setCorrectAnswersCount((prevCount) => prevCount + 1); // Add score to the player
       } else {
+        // If wrong
         setIsCorrect(false);
         setCorrectAnswer(correctAnswer); // Show the correct answer if the player gets the wrong answer
       }
@@ -84,6 +86,7 @@ export default function Quiz1() {
       setIsCorrect(false);
     }
 
+    // Continue here after the validation of player answer
     setTimeout(() => {
       setIsCorrect(null);
       if (currentQuestionIndex < questions.length - 1) {
@@ -91,13 +94,14 @@ export default function Quiz1() {
         setSelectedAnswer(null);
         setCorrectAnswer(null);
       } else {
-        setShowResult(true);
+        // If no available quiz left based on the number of random items
+        setShowResult(true); // Show the end result of the quiz
         setSelectedAnswer(null);
       }
     }, 1500);
   };
 
-  // Query to route to the result page
+  // Proceed to the result page to see the score
   const onShowResult = () => {
     setTimeout(() => {
       router.replace({
