@@ -38,29 +38,35 @@ export default function quiz2() {
     setQuestions(getRandomItem(data, 10)); // Pick 10 random questions when component mounts
   }, []);
 
+  // Submits and check the player answer
   const onAnswer = (answer) => {
     setSelectedAnswer(true);
     const currentQuestion = questions[currentQuestionIndex];
 
     if (answer === currentQuestion.a) {
+      // If player's answer is correct
       setCorrectAnswersCount((prevCount) => prevCount + 1); // Add score to the player
       setIsCorrect(true);
     } else {
-      setIsCorrect(false);
+      // If wrong
+      setIsCorrect(false); // No added score
     }
 
+    // Continues here after the validation
     setTimeout(() => {
       setIsCorrect(null);
       if (currentQuestionIndex < questions.length - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1); // Proceeds to the next question
         setSelectedAnswer(null);
       } else {
-        setShowResult(true);
+        // If no available quiz left based on the number of random items
+        setShowResult(true); // Show the end result of the quiz
         setSelectedAnswer(null);
       }
     }, 1500);
   };
 
+  // Proceed to the result page to see the score
   const onShowResult = () => {
     setTimeout(() => {
       router.replace({
