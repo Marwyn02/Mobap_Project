@@ -13,10 +13,16 @@ import QuestionCount from "../components/QuestionCount";
 import Level from "../components/Level";
 import ResultButton from "../components/ResultButton";
 
+// Get RANDOM questions from the data questions
 const getRandomItem = (array, num) => {
   const shuffledArray = array.sort(() => 0.5 - Math.random());
   return shuffledArray.slice(0, num);
 };
+
+// Quiz 4
+// Fill in the blank - SQL Query Quiz
+// Topic:
+//   Vanilla SQL
 
 export default function quiz4() {
   const [questions, setQuestions] = useState([]);
@@ -27,9 +33,10 @@ export default function quiz4() {
   const [showResult, setShowResult] = useState(false);
 
   useEffect(() => {
-    setQuestions(getRandomItem(data, 5)); // Pick a random question when component mounts
+    setQuestions(getRandomItem(data, 5)); // Pick a 5 random question when component mounts
   }, []);
 
+  // Submits and check the player answer
   const onSubmit = () => {
     if (questions.length === 0) return;
 
@@ -37,28 +44,34 @@ export default function quiz4() {
     const correctAnswer = currentQuestion.a;
 
     if (value !== "" && value !== null && value !== undefined) {
+      // Checks the players answer if correct or not undefined
       if (value.trim().toLowerCase() === correctAnswer.trim().toLowerCase()) {
+        // Match the player answer if correct to the answer key
+        // If player answer is correct
         setIsCorrect(true);
-        setCorrectAnswersCount((prevCount) => prevCount + 1);
+        setCorrectAnswersCount((prevCount) => prevCount + 1); // Add score player
       } else {
+        // If wrong
         setIsCorrect(false);
       }
     } else {
       setIsCorrect(false);
     }
 
+    // Continues here after the validation
     setTimeout(() => {
       setIsCorrect(null);
-      setValue("");
-
+      setValue(""); // Set blank value after submission
       if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setCurrentQuestionIndex(currentQuestionIndex + 1); // Proceeds to next question
       } else {
-        setShowResult(true);
+        // If no available quiz left based on the number of random items
+        setShowResult(true); // Show the end result of the quiz
       }
     }, 2000);
   };
 
+  // Proceed to the result page to see the score
   const onShowResult = () => {
     setTimeout(() => {
       router.replace({
@@ -82,11 +95,12 @@ export default function quiz4() {
       style={styles.backgroundImage}
       resizeMode="cover"
     >
-      <Level level={4} />{" "}
+      <Level level={4} />
       <View style={styles.container}>
         <QuestionCount
           showResult={showResult}
           currentQuestionIndex={currentQuestionIndex}
+          correctAnswer={correctAnswersCount}
           questions={questions.length}
           quiz={4}
         />
@@ -240,16 +254,6 @@ const data = [
     q: "To select all columns from the table 'users' and alias the column 'name' as 'username' in SQL.",
     a: "SELECT name AS username, * FROM users",
   },
-  // {
-  //   id: 20,
-  //   q: "To create a new table 'customers' with columns 'id', 'name', and 'email' in SQL.",
-  //   a: "CREATE TABLE customers (id INT PRIMARY KEY, name VARCHAR(1255), email VARCHAR(255))",
-  // },
-  // {
-  //   id: 21,
-  //   q: "To add a new column 'phone' to the table 'customers' in SQL.",
-  //   a: "ALTER TABLE customers ADD phone VARCHAR(255)",
-  // },
   {
     id: 22,
     q: "To drop the table 'old_customers' in SQL.",
