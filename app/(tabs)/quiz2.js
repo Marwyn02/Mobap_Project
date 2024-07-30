@@ -12,10 +12,19 @@ import QuestionCount from "../components/QuestionCount";
 import Level from "../components/Level";
 import ResultButton from "../components/ResultButton";
 
+// Get RANDOM questions from the data questions
 const getRandomItem = (array, num) => {
   const shuffledArray = array.sort(() => 0.5 - Math.random());
   return shuffledArray.slice(0, num);
 };
+
+// Quiz 2
+// True and False Quiz
+// Topic:
+//   HTML
+//   CSS
+//   Javascript
+//   PHP
 
 export default function quiz2() {
   const [questions, setQuestions] = useState([]);
@@ -26,7 +35,7 @@ export default function quiz2() {
   const [selectedAnswer, setSelectedAnswer] = useState(null);
 
   useEffect(() => {
-    setQuestions(getRandomItem(data, 1)); // Pick 5 random questions when component mounts
+    setQuestions(getRandomItem(data, 10)); // Pick 10 random questions when component mounts
   }, []);
 
   const onAnswer = (answer) => {
@@ -34,7 +43,7 @@ export default function quiz2() {
     const currentQuestion = questions[currentQuestionIndex];
 
     if (answer === currentQuestion.a) {
-      setCorrectAnswersCount((prevCount) => prevCount + 1);
+      setCorrectAnswersCount((prevCount) => prevCount + 1); // Add score to the player
       setIsCorrect(true);
     } else {
       setIsCorrect(false);
@@ -43,13 +52,13 @@ export default function quiz2() {
     setTimeout(() => {
       setIsCorrect(null);
       if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setCurrentQuestionIndex(currentQuestionIndex + 1); // Proceeds to the next question
         setSelectedAnswer(null);
       } else {
         setShowResult(true);
         setSelectedAnswer(null);
       }
-    }, 1500); // Clear feedback after 1 second
+    }, 1500);
   };
 
   const onShowResult = () => {
@@ -81,6 +90,7 @@ export default function quiz2() {
         <QuestionCount
           showResult={showResult}
           currentQuestionIndex={currentQuestionIndex}
+          correctAnswer={correctAnswersCount}
           questions={questions.length}
           quiz={2}
         />
