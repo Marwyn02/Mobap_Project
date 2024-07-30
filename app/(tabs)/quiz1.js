@@ -40,6 +40,13 @@ const shuffle = (array) => {
   return array;
 };
 
+// Quiz 1
+// Multiple Choice Quiz
+// Topic:
+//   HTML
+//   CSS
+//   Javascript
+
 export default function Quiz1() {
   const [questions, setQuestions] = useState([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
