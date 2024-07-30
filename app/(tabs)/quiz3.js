@@ -13,10 +13,21 @@ import QuestionCount from "../components/QuestionCount";
 import Level from "../components/Level";
 import ResultButton from "../components/ResultButton";
 
+// Get RANDOM questions from the data questions
 const getRandomItem = (array, num) => {
   const shuffledArray = array.sort(() => 0.5 - Math.random());
   return shuffledArray.slice(0, num);
 };
+
+// Quiz 3
+// Fill in the blank Quiz
+// Topic:
+//   HTML
+//   CSS
+//   Javascript
+//   React
+//   React-Native
+//   PHP
 
 export default function Quiz3() {
   const [questions, setQuestions] = useState([]);
@@ -27,9 +38,10 @@ export default function Quiz3() {
   const [showResult, setShowResult] = useState(false);
 
   useEffect(() => {
-    setQuestions(getRandomItem(data, 10)); // Pick a random question when component mounts
+    setQuestions(getRandomItem(data, 10)); // Pick a 10 random question when component mounts
   }, []);
 
+  // Submits and check the player answer
   const onSubmit = () => {
     if (questions.length === 0) return;
 
@@ -37,28 +49,34 @@ export default function Quiz3() {
     const correctAnswer = currentQuestion.a;
 
     if (value !== "" && value !== null && value !== undefined) {
+      // Checks the players answer if correct or not undefined
       if (value.trim().toLowerCase() === correctAnswer.trim().toLowerCase()) {
+        // Match the player answer if correct to the answer key
+        // If player answer is correct
         setIsCorrect(true);
-        setCorrectAnswersCount((prevCount) => prevCount + 1);
+        setCorrectAnswersCount((prevCount) => prevCount + 1); // Add score player
       } else {
+        // If wrong
         setIsCorrect(false);
       }
     } else {
       setIsCorrect(false);
     }
 
+    // Continues here after the validation
     setTimeout(() => {
       setIsCorrect(null);
-      setValue("");
-
+      setValue(""); // Set blank value after submission
       if (currentQuestionIndex < questions.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
+        setCurrentQuestionIndex(currentQuestionIndex + 1); // Proceeds to next question
       } else {
-        setShowResult(true);
+        // If no available quiz left based on the number of random items
+        setShowResult(true); // Show the end result of the quiz
       }
     }, 1500);
   };
 
+  // Proceed to the result page to see the score
   const onShowResult = () => {
     setTimeout(() => {
       router.replace({
@@ -82,11 +100,12 @@ export default function Quiz3() {
       style={styles.backgroundImage}
       resizeMode="cover"
     >
-      <Level level={3} />{" "}
+      <Level level={3} />
       <View style={styles.container}>
         <QuestionCount
           showResult={showResult}
           currentQuestionIndex={currentQuestionIndex}
+          correctAnswer={correctAnswersCount}
           questions={questions.length}
           quiz={3}
         />
