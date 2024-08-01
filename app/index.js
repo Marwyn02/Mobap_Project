@@ -13,12 +13,20 @@ export default function Page() {
       source={require("../public/Intro.gif")}
       style={styles.backgroundImage}
     >
+      <Pressable
+        className="px-5 py-2"
+        onPress={() => router.push("(tabs)/comic")}
+      >
+        <Text className="absolute top-10 left-5 text-sm font-semibold underline tracking-wide">
+          Read our comic
+        </Text>
+      </Pressable>
+
       <View style={styles.container}>
         <View style={styles.main}>
-          {/* <Text style={styles.title}>Code Crusaders</Text> */}
           <Pressable
             className="bg-black px-10 py-3 rounded-lg active:bg-gray-500"
-            onPress={() => router.push("(tabs)")}
+            onPress={() => router.replace("(tabs)")}
           >
             <Text className="text-[#DDD] font-bold text-2xl text-center uppercase tracking-widest active:text-[#888]">
               Play
@@ -50,6 +58,7 @@ const styles = StyleSheet.create({
   },
   backgroundImage: {
     flex: 1,
+    position: "relative",
     width: "100%",
     height: "100%",
     justifyContent: "center",
