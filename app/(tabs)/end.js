@@ -8,11 +8,11 @@ const end = () => {
         <Text className="text-white text-3xl p-5 font-bold mb-5">
           You beat Code Crusaders!
         </Text>
-        <Image
+        {/* <Image
           source={require("../../public/Congratulations.gif")}
           className="w-screen h-[40%]"
           resizeMode="cover"
-        />
+        /> */}
 
         <Text className="text-white font-bold bg-black py-3 text-center text-2xl mt-5">
           You have defeated Glitch King!

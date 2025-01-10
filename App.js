@@ -1,3 +1,6 @@
+import "nativewind/css"; // Required for NativeWind
+import "./global.css";
+
 import { StatusBar } from "expo-status-bar";
 import { Image, StyleSheet, Text, View } from "react-native";
 
