@@ -5,43 +5,37 @@ const lost = () => {
   return (
     <View style={styles.container}>
       <View style={styles.main}>
-        <View style={styles.container}>
-          <Text className="text-red-500 text-3xl p-5 font-bold mb-5">
-            You Lost!
-          </Text>
+        <View style={styles.innerContainer}>
+          <Text style={styles.title}>You Lost!</Text>
 
-          <Text className="text-white font-bold bg-black py-3 text-center text-2xl mx-12 my-5">
+          <Text style={styles.subTitle}>
             You have been defeated by Glitch King!
           </Text>
 
           <Pressable
-            className="bg-yellow-600 p-5 mx-10 rounded-md active:bg-orange-500"
+            style={({ pressed }) => [
+              styles.retryButton,
+              pressed && styles.retryButtonPressed,
+            ]}
             onPress={() => router.push("/quiz5")}
           >
-            <Text className="text-center text-white font-bold">
-              Fight Glitch King again!
-            </Text>
+            <Text style={styles.retryButtonText}>Fight Glitch King again!</Text>
           </Pressable>
         </View>
 
         <Pressable onPress={() => router.push("/")}>
-          <Text className="text-center text-white underline font-bold">
-            Go home
-          </Text>
+          <Text style={styles.homeButton}>Go home</Text>
         </Pressable>
       </View>
     </View>
   );
 };
 
-export default lost;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    fontSize: 64,
     backgroundColor: "#000",
   },
   main: {
@@ -50,4 +44,46 @@ const styles = StyleSheet.create({
     maxWidth: 960,
     marginHorizontal: "auto",
   },
+  innerContainer: {
+    alignItems: "center",
+  },
+  title: {
+    color: "red",
+    fontSize: 24,
+    padding: 20,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  subTitle: {
+    color: "white",
+    fontWeight: "bold",
+    backgroundColor: "black",
+    paddingVertical: 12,
+    textAlign: "center",
+    fontSize: 20,
+    marginHorizontal: 48,
+    marginVertical: 20,
+  },
+  retryButton: {
+    backgroundColor: "yellow",
+    padding: 20,
+    marginHorizontal: 40,
+    borderRadius: 10,
+  },
+  retryButtonPressed: {
+    backgroundColor: "orange",
+  },
+  retryButtonText: {
+    textAlign: "center",
+    color: "white",
+    fontWeight: "bold",
+  },
+  homeButton: {
+    textAlign: "center",
+    color: "white",
+    textDecorationLine: "underline",
+    fontWeight: "bold",
+  },
 });
+
+export default lost;

@@ -1,22 +1,58 @@
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 
 const Question = ({ isCorrect, currentQuestion }) => {
   return (
-    <View className="text-black text-center font-bold bg-white w-screen rounded-t-3xl py-5 px-5">
+    <View style={styles.container}>
       {isCorrect === false ? (
-        <Text className="uppercase text-center bg-red-500 text-white rounded-full font-bold text-2xl py-2 tracking-widest">
-          Incorrect answer!
-        </Text>
+        <Text style={styles.incorrectAnswer}>Incorrect answer!</Text>
       ) : isCorrect === true ? (
-        <Text className="uppercase text-center bg-green-500 rounded-full text-white font-bold text-2xl py-2 tracking-widest">
-          Correct answer!
-        </Text>
+        <Text style={styles.correctAnswer}>Correct answer!</Text>
       ) : (
-        <Text className="py-2 text-lg">{currentQuestion}</Text>
+        <Text style={styles.questionText}>{currentQuestion}</Text>
       )}
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    color: "black",
+    textAlign: "center",
+    fontWeight: "bold",
+    backgroundColor: "white",
+    width: "100%",
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    paddingVertical: 20,
+    paddingHorizontal: 20,
+  },
+  incorrectAnswer: {
+    textTransform: "uppercase",
+    textAlign: "center",
+    backgroundColor: "red",
+    color: "white",
+    borderRadius: 50,
+    fontWeight: "bold",
+    fontSize: 24,
+    paddingVertical: 8,
+    letterSpacing: 2,
+  },
+  correctAnswer: {
+    textTransform: "uppercase",
+    textAlign: "center",
+    backgroundColor: "green",
+    color: "white",
+    borderRadius: 50,
+    fontWeight: "bold",
+    fontSize: 24,
+    paddingVertical: 8,
+    letterSpacing: 2,
+  },
+  questionText: {
+    paddingVertical: 8,
+    fontSize: 18,
+  },
+});
 
 export default Question;

@@ -1,33 +1,24 @@
 import { router } from "expo-router";
-import { Pressable, StyleSheet, Text, Image, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 
 const end = () => {
   return (
     <View style={styles.container}>
       <View style={styles.main}>
-        <Text className="text-white text-3xl p-5 font-bold mb-5">
-          You beat Code Crusaders!
-        </Text>
-        {/* <Image
-          source={require("../../public/Congratulations.gif")}
-          className="w-screen h-[40%]"
-          resizeMode="cover"
-        /> */}
-
-        <Text className="text-white font-bold bg-black py-3 text-center text-2xl mt-5">
-          You have defeated Glitch King!
-        </Text>
+        <Text style={styles.title}>You beat Code Crusaders!</Text>
+        <Text style={styles.subTitle}>You have defeated Glitch King!</Text>
 
         <Pressable
-          className="bg-yellow-600 p-5 rounded-md mx-5 active:bg-orange-500"
+          style={({ pressed }) => [
+            styles.button,
+            pressed && styles.buttonPressed,
+          ]}
           onPress={() => router.push("/")}
         >
-          <Text className="text-center text-white font-bold">Start again</Text>
+          <Text style={styles.buttonText}>Start again</Text>
         </Pressable>
 
-        <Text className="text-white text-center p-5 mt-2">
-          Thank you for playing our game.
-        </Text>
+        <Text style={styles.thankYouText}>Thank you for playing our game.</Text>
       </View>
     </View>
   );
@@ -46,5 +37,41 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     maxWidth: 960,
     marginHorizontal: "auto",
+  },
+  title: {
+    color: "white",
+    fontSize: 24,
+    padding: 20,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  subTitle: {
+    color: "white",
+    fontWeight: "bold",
+    backgroundColor: "black",
+    paddingVertical: 12,
+    textAlign: "center",
+    fontSize: 20,
+    marginTop: 20,
+  },
+  button: {
+    backgroundColor: "yellow",
+    padding: 20,
+    borderRadius: 10,
+    marginHorizontal: 20,
+  },
+  buttonPressed: {
+    backgroundColor: "orange",
+  },
+  buttonText: {
+    textAlign: "center",
+    color: "white",
+    fontWeight: "bold",
+  },
+  thankYouText: {
+    color: "white",
+    textAlign: "center",
+    padding: 20,
+    marginTop: 8,
   },
 });

@@ -147,26 +147,24 @@ export default function Quiz1() {
               isCorrect={isCorrect}
               currentQuestion={currentQuestion.q}
             />
-            <View className="bg-white flex flex-col flex-wrap gap-y-2 py-6 px-3">
+            <View style={styles.choicesContainer}>
               {shuffledChoices.map((choice, index) => (
                 <Pressable
                   key={index}
-                  className={`bg-white border border-gray-500 flex flex-row items-center py-1 rounded-full active:bg-blue-50 w-full ${
-                    selectedAnswer === index && correctAnswer === null
-                      ? "bg-green-400 border-green-400"
-                      : correctAnswer === choice
-                      ? "bg-green-400 border-green-400"
-                      : ""
-                  } `}
+                  style={[
+                    styles.choiceButton,
+                    selectedAnswer === index &&
+                      correctAnswer === null &&
+                      styles.selectedChoice,
+                    correctAnswer === choice && styles.correctChoice,
+                  ]}
                   onPress={() => onChoiceSelect(index, choice)}
                   disabled={selectedAnswer !== null}
                 >
-                  <Text className="uppercase text-center text-green-600 font-medium text-base bg-green-200 px-3.5 py-1.5 rounded-full ml-2 mr-3">
+                  <Text style={styles.choiceLetter}>
                     {String.fromCharCode(65 + index)}
                   </Text>
-                  <Text className="text-center text-black text-base">
-                    {choice}
-                  </Text>
+                  <Text style={styles.choiceText}>{choice}</Text>
                 </Pressable>
               ))}
             </View>
@@ -183,13 +181,57 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-end", // Align content at the bottom
-    padding: 0,
+    paddingBottom: 40,
   },
   backgroundImage: {
     flex: 1,
     width: "100%",
     height: "100%",
     justifyContent: "center", // Center content vertically
+  },
+  choicesContainer: {
+    backgroundColor: "white",
+    flexDirection: "column",
+    flexWrap: "wrap",
+    gap: 2,
+    paddingVertical: 24,
+    paddingHorizontal: 12,
+  },
+  choiceButton: {
+    backgroundColor: "white",
+    borderColor: "gray",
+    borderWidth: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 4,
+    borderRadius: 50,
+    width: "100%",
+  },
+  selectedChoice: {
+    backgroundColor: "green",
+    borderColor: "green",
+  },
+  correctChoice: {
+    backgroundColor: "green",
+    borderColor: "green",
+  },
+  choiceLetter: {
+    textTransform: "uppercase",
+    textAlign: "center",
+    color: "green",
+    fontWeight: "500",
+    fontSize: 16,
+    backgroundColor: "lightgreen",
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 50,
+    marginLeft: 8,
+    marginRight: 12,
+  },
+  choiceText: {
+    textAlign: "center",
+    color: "black",
+    fontSize: 16,
   },
 });
 

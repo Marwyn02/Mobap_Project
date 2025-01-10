@@ -14,21 +14,27 @@ export default function Page() {
       style={styles.backgroundImage}
     >
       <Pressable
-        className="px-5 py-2"
+        style={styles.pressableComic}
         onPress={() => router.push("(tabs)/comic")}
       >
-        <Text className="absolute top-10 left-5 text-sm font-semibold underline tracking-wide">
-          Read our comic
-        </Text>
+        <Text style={styles.textComic}>Read our comic</Text>
       </Pressable>
 
       <View style={styles.container}>
         <View style={styles.main}>
           <Pressable
-            className="bg-black px-10 py-3 rounded-lg active:bg-gray-500"
+            style={({ pressed }) => [
+              styles.pressablePlay,
+              pressed && styles.pressablePlayActive,
+            ]}
             onPress={() => router.replace("(tabs)")}
           >
-            <Text className="text-[#DDD] font-bold text-2xl text-center uppercase tracking-widest active:text-[#888]">
+            <Text
+              style={({ pressed }) => [
+                styles.textPlay,
+                pressed && styles.textPlayActive,
+              ]}
+            >
               Play
             </Text>
           </Pressable>
@@ -62,5 +68,38 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     justifyContent: "center",
+  },
+  pressableComic: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+  },
+  textComic: {
+    position: "absolute",
+    top: 40,
+    left: 20,
+    fontSize: 14,
+    fontWeight: "600",
+    textDecorationLine: "underline",
+    letterSpacing: 1.5,
+  },
+  pressablePlay: {
+    backgroundColor: "black",
+    paddingHorizontal: 40,
+    paddingVertical: 12,
+    borderRadius: 10,
+  },
+  pressablePlayActive: {
+    backgroundColor: "gray",
+  },
+  textPlay: {
+    color: "#DDD",
+    fontWeight: "bold",
+    fontSize: 24,
+    textAlign: "center",
+    textTransform: "uppercase",
+    letterSpacing: 2,
+  },
+  textPlayActive: {
+    color: "#888",
   },
 });

@@ -1,12 +1,19 @@
 import React from "react";
-import { Text } from "react-native";
+import { Text, StyleSheet } from "react-native";
 
 const Level = ({ level }) => {
-  return (
-    <Text className="text-lg tracking-widest uppercase font-bold py-10 px-5">
-      Level {level}
-    </Text>
-  );
+  return <Text style={styles.levelText}>Level {level}</Text>;
 };
+
+const styles = StyleSheet.create({
+  levelText: {
+    fontSize: 18,
+    letterSpacing: 2,
+    textTransform: "uppercase",
+    fontWeight: "bold",
+    paddingVertical: 40,
+    paddingHorizontal: 20,
+  },
+});
 
 export default Level;

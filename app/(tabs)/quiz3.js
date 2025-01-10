@@ -117,27 +117,27 @@ export default function Quiz3() {
               currentQuestion={currentQuestion.q}
             />
 
-            <View className="bg-white px-5 pt-10 pb-24">
+            <View style={styles.answerContainer}>
               <TextInput
                 multiline
                 value={value}
                 onChangeText={setValue}
                 placeholder="Enter your answer here"
                 blurOnSubmit={true}
-                className={`bg-gray-200 border border-black px-5 py-3.5 mx-0 text-lg text-black w-[375px] rounded-md duration-300 ${
-                  value.length > 30 && "rounded-lg"
-                }`}
+                style={[
+                  styles.textInput,
+                  value.length > 30 && styles.textInputExtended,
+                ]}
               />
               <Pressable
-                className={`bg-blue-400 active:bg-blue-200 py-3 rounded-full mt-5 ${
-                  value === "" && "bg-gray-300"
-                }`}
+                style={[
+                  styles.submitButton,
+                  value === "" && styles.submitButtonDisabled,
+                ]}
                 onPress={onSubmit}
                 disabled={value === ""}
               >
-                <Text className="text-center text-white font-semibold">
-                  Enter
-                </Text>
+                <Text style={styles.submitButtonText}>Enter</Text>
               </Pressable>
             </View>
           </>
@@ -152,14 +152,50 @@ export default function Quiz3() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-end", // Align content at the bottom
+    justifyContent: "flex-end",
     padding: 0,
   },
   backgroundImage: {
     flex: 1,
     width: "100%",
     height: "100%",
-    justifyContent: "center", // Center content vertically
+    justifyContent: "center",
+  },
+  answerContainer: {
+    backgroundColor: "white",
+    paddingHorizontal: 20,
+    paddingTop: 40,
+    paddingBottom: 96,
+  },
+  textInput: {
+    backgroundColor: "gray",
+    borderColor: "black",
+    borderWidth: 1,
+    paddingHorizontal: 20,
+    paddingVertical: 14,
+    marginHorizontal: 0,
+    fontSize: 18,
+    color: "black",
+    width: 375,
+    borderRadius: 8,
+    transitionDuration: "300ms",
+  },
+  textInputExtended: {
+    borderRadius: 16,
+  },
+  submitButton: {
+    backgroundColor: "blue",
+    paddingVertical: 12,
+    borderRadius: 50,
+    marginTop: 20,
+  },
+  submitButtonDisabled: {
+    backgroundColor: "gray",
+  },
+  submitButtonText: {
+    textAlign: "center",
+    color: "white",
+    fontWeight: "600",
   },
 });
 

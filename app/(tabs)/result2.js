@@ -16,26 +16,22 @@ export default function Result2() {
   };
   return (
     <View style={styles.container}>
-      <Text className="text-white text-center text-3xl mb-4">
-        Quiz 2 Result
-      </Text>
-      <Text className="text-white text-center text-2xl">
+      <Text style={styles.resultTitle}>Quiz 2 Result</Text>
+      <Text style={styles.resultText}>
         You got {correctAnswersCount} out of {totalQuestions} correct.
       </Text>
 
       {percentage < 80 ? (
-        <Text className="text-sm text-gray-400 text-center mt-1">
+        <Text style={styles.retryMessage}>
           Unfortunately, you did not pass the quiz as you did not reach the
-          required{" "}
-          <Text className="text-orange-400 font-semibold">8 score</Text>. Please
-          retry the quiz to improve your understanding and try again.
+          required
+          <Text style={styles.requiredScore}> 8 score</Text>. Please retry the
+          quiz to improve your understanding and try again.
         </Text>
       ) : (
         <View>
-          <Text className="text-lg text-orange-400 text-center mt-1">
-            You've passed the Quiz 2!
-          </Text>
-          <Text className="text-xs text-gray-400 text-center">
+          <Text style={styles.passMessage}>You've passed the Quiz 2!</Text>
+          <Text style={styles.proceedMessage}>
             Click the proceed to continue to Level 3.
           </Text>
         </View>
@@ -43,15 +39,11 @@ export default function Result2() {
 
       {percentage < 80 ? (
         <Pressable onPress={handleRetry}>
-          <Text className="text-lg text-white font-semibold underline my-5">
-            Retry quiz
-          </Text>
+          <Text style={styles.retryButton}>Retry quiz</Text>
         </Pressable>
       ) : (
         <Pressable onPress={handleNextQuiz}>
-          <Text className="text-white font-semibold underline my-5">
-            Click to Proceed
-          </Text>
+          <Text style={styles.proceedButton}>Click to Proceed</Text>
         </Pressable>
       )}
     </View>
@@ -65,5 +57,50 @@ const styles = StyleSheet.create({
     alignItems: "center",
     padding: 32,
     backgroundColor: "#000",
+  },
+  resultTitle: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 24,
+    marginBottom: 16,
+  },
+  resultText: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 20,
+  },
+  retryMessage: {
+    fontSize: 12,
+    color: "gray",
+    textAlign: "center",
+    marginTop: 4,
+  },
+  requiredScore: {
+    color: "orange",
+    fontWeight: "600",
+  },
+  passMessage: {
+    fontSize: 18,
+    color: "orange",
+    textAlign: "center",
+    marginTop: 4,
+  },
+  proceedMessage: {
+    fontSize: 10,
+    color: "gray",
+    textAlign: "center",
+  },
+  retryButton: {
+    fontSize: 18,
+    color: "white",
+    fontWeight: "600",
+    textDecorationLine: "underline",
+    marginVertical: 20,
+  },
+  proceedButton: {
+    color: "white",
+    fontWeight: "600",
+    textDecorationLine: "underline",
+    marginVertical: 20,
   },
 });

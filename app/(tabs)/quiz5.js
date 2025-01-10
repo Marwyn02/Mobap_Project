@@ -198,68 +198,63 @@ export default function FinalBossBattle() {
       style={styles.backgroundImage}
       resizeMode="cover"
     >
-      <Modal
-        visible={showModal}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setShowModal(false)}
-      >
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Text className="text-lg mb-3 font-semibold">
-              Are you ready to face the Glitch King?
-            </Text>
-            <Pressable
-              className="px-8 py-4 rounded-md bg-orange-400 active:bg-orange-500"
-              onPress={() => setShowModal(false)}
-            >
-              <Text className="text-white font-semibold">Start Battle</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
-
-      {redScreenOpacity > 0 && (
-        <Animated.View style={[styles.redScreen, { opacity: fadeAnim }]}>
-          <View style={styles.redScreenOverlay} />
-        </Animated.View>
-      )}
-
-      {showGif ? (
-        <View style={styles.gifContainer}>
-          {showGif === "Scene5" && (
-            <ImageBackground
-              source={require("../../public/Scene5.gif")}
-              style={styles.gifBackground}
-              resizeMode="cover"
-            />
-          )}
-        </View>
-      ) : (
-        !showModal && (
-          <View style={styles.container}>
-            <View className="flex flex-col justify-center items-center gap-y-2 py-10 px-5">
-              {/* Boss Health */}
-              <Text className="text-center text-lg font-bold text-red-900 bg-red-200 rounded-full tracking-wide px-3 py-0.5">
-                Glitch King
+      <Level level={4} />
+      <View style={styles.container}>
+        <Modal
+          visible={showModal}
+          transparent={true}
+          animationType="slide"
+          onRequestClose={() => setShowModal(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalText}>
+                Are you ready to face the Glitch King?
               </Text>
-
-              <Text className="text-sm text-red-600 font-bold tracking-widest bg-white px-3 py-0.5 rounded-full">
-                {deletionQuery}
-              </Text>
+              <Pressable
+                style={({ pressed }) => [
+                  styles.modalButton,
+                  pressed && styles.modalButtonPressed,
+                ]}
+                onPress={() => setShowModal(false)}
+              >
+                <Text style={styles.modalButtonText}>Start Battle</Text>
+              </Pressable>
             </View>
+          </View>
+        </Modal>
 
-            <View style={styles.container}>
-              {/* Player health bar */}
-              <View className="flex flex-col justify-center items-center space-y-2 p-3">
-                <View className="flex flex-row bg-white rounded-full px-2 py-0.5">
-                  <Text className="text-sm font-bold text-blue-600 mr-2">
-                    Your Query:
-                  </Text>
-                  <Text className="text-black font-bold">{userQuery}</Text>
+        {redScreenOpacity > 0 && (
+          <Animated.View style={[styles.redScreen, { opacity: fadeAnim }]}>
+            <View style={styles.redScreenOverlay} />
+          </Animated.View>
+        )}
+
+        {showGif ? (
+          <View style={styles.gifContainer}>
+            {showGif === "Scene5" && (
+              <ImageBackground
+                source={require("../../public/Scene5.gif")}
+                style={styles.gifBackground}
+                resizeMode="cover"
+              />
+            )}
+          </View>
+        ) : (
+          !showModal && (
+            <View style={styles.innerContainer}>
+              <View style={styles.bossContainer}>
+                <Text style={styles.bossTitle}>Glitch King</Text>
+                <Text style={styles.deletionQuery}>{deletionQuery}</Text>
+              </View>
+
+              <View style={styles.playerContainer}>
+                <View style={styles.queryContainer}>
+                  <Text style={styles.queryLabel}>Your Query:</Text>
+                  <Text style={styles.queryText}>{userQuery}</Text>
                 </View>
 
-                <Text className="text-black text-center font-bold bg-white rounded-full px-3 py-0.5">
+                <Text style={styles.timerText}>
                   {timeLeft !== null
                     ? timeLeft > 1
                       ? `${timeLeft} seconds left`
@@ -277,33 +272,29 @@ export default function FinalBossBattle() {
                     currentQuestion={currentQuestion.question}
                   />
 
-                  <View className="bg-white flex flex-col flex-wrap gap-y-2 py-6 px-3">
+                  <View style={styles.optionsContainer}>
                     {shuffledChoices.map((option, index) => (
                       <Pressable
                         key={index}
-                        className={`
-                            h-auto bg-white border border-gray-500 flex flex-row items-center py-1 rounded-full active:bg-blue-50 w-[380px] ${
-                              selectedAnswer === index && isCorrect === true
-                                ? "bg-green-400 border-green-400"
-                                : isCorrect === false &&
-                                  selectedAnswer === index
-                                ? "bg-red-400 border-red-400"
-                                : ""
-                            }`}
+                        style={[
+                          styles.optionButton,
+                          selectedAnswer === index &&
+                            isCorrect === true &&
+                            styles.correctOption,
+                          selectedAnswer === index &&
+                            isCorrect === false &&
+                            styles.incorrectOption,
+                        ]}
                         onPress={() => handleAnswerSelection(index, option)}
                         disabled={selectedAnswer !== null}
                       >
-                        <Text className="uppercase text-center text-green-600 font-medium text-base bg-green-200 px-3.5 py-1.5 rounded-full ml-2 mr-3">
+                        <Text style={styles.optionLabel}>
                           {String.fromCharCode(65 + index)}
                         </Text>
                         {option.length > 25 ? (
-                          <Text className="text-start text-black text-xs flex flex-wrap w-[300px] mr-5">
-                            {option}
-                          </Text>
+                          <Text style={styles.optionTextSmall}>{option}</Text>
                         ) : (
-                          <Text className="text-start text-black text-base">
-                            {option}
-                          </Text>
+                          <Text style={styles.optionText}>{option}</Text>
                         )}
                       </Pressable>
                     ))}
@@ -313,9 +304,9 @@ export default function FinalBossBattle() {
                 <ResultButton doPress={onShowResult} />
               )}
             </View>
-          </View>
-        )
-      )}
+          )
+        )}
+      </View>
     </ImageBackground>
   );
 }
@@ -324,6 +315,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: "flex-end",
+    alignItems: "center",
+    padding: 0,
+  },
+  innerContainer: {
+    flex: 1,
+    justifyContent: "center",
     alignItems: "center",
     padding: 0,
   },
@@ -345,6 +342,24 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: "center",
   },
+  modalText: {
+    fontSize: 18,
+    marginBottom: 12,
+    fontWeight: "600",
+  },
+  modalButton: {
+    backgroundColor: "orange",
+    paddingHorizontal: 32,
+    paddingVertical: 16,
+    borderRadius: 10,
+  },
+  modalButtonPressed: {
+    backgroundColor: "darkorange",
+  },
+  modalButtonText: {
+    color: "white",
+    fontWeight: "600",
+  },
   timerText: {
     color: "white",
     textAlign: "center",
@@ -362,10 +377,6 @@ const styles = StyleSheet.create({
     height: "100%",
     justifyContent: "center",
   },
-  halfScreenGif: {
-    width: "100%",
-    height: "50%",
-  },
   redScreenOverlay: {
     ...StyleSheet.absoluteFillObject,
     backgroundColor: "rgba(255, 0, 0, 0.5)", // Red overlay
@@ -374,6 +385,110 @@ const styles = StyleSheet.create({
     ...StyleSheet.absoluteFillObject,
     justifyContent: "center",
     alignItems: "center",
+  },
+  bossContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 24,
+    paddingHorizontal: 20,
+    backgroundColor: "white",
+  },
+  bossTitle: {
+    textAlign: "center",
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "red",
+    backgroundColor: "red",
+    borderRadius: 50,
+    paddingHorizontal: 12,
+    paddingVertical: 2,
+  },
+  deletionQuery: {
+    textAlign: "center",
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "red",
+    backgroundColor: "white",
+    borderRadius: 50,
+    paddingHorizontal: 12,
+    paddingVertical: 2,
+  },
+  playerContainer: {
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    backgroundColor: "white",
+  },
+  queryContainer: {
+    flexDirection: "row",
+    backgroundColor: "white",
+    borderRadius: 50,
+    paddingHorizontal: 8,
+    paddingVertical: 2,
+  },
+  queryLabel: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "blue",
+    marginRight: 8,
+  },
+  queryText: {
+    fontSize: 14,
+    fontWeight: "bold",
+    color: "black",
+  },
+  optionsContainer: {
+    backgroundColor: "white",
+    flexDirection: "column",
+    flexWrap: "wrap",
+    gap: 8,
+    paddingVertical: 24,
+    paddingHorizontal: 12,
+  },
+  optionButton: {
+    backgroundColor: "white",
+    borderColor: "gray",
+    borderWidth: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 4,
+    borderRadius: 50,
+    width: 380,
+  },
+  correctOption: {
+    backgroundColor: "green",
+    borderColor: "green",
+  },
+  incorrectOption: {
+    backgroundColor: "red",
+    borderColor: "red",
+  },
+  optionLabel: {
+    textTransform: "uppercase",
+    textAlign: "center",
+    color: "green",
+    fontWeight: "500",
+    fontSize: 16,
+    backgroundColor: "lightgreen",
+    paddingHorizontal: 14,
+    paddingVertical: 6,
+    borderRadius: 50,
+    marginLeft: 8,
+    marginRight: 12,
+  },
+  optionText: {
+    textAlign: "start",
+    color: "black",
+    fontSize: 16,
+  },
+  optionTextSmall: {
+    textAlign: "start",
+    color: "black",
+    fontSize: 12,
+    flexWrap: "wrap",
+    width: 300,
+    marginRight: 20,
   },
 });
 

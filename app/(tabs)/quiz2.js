@@ -108,21 +108,29 @@ export default function quiz2() {
               currentQuestion={currentQuestion.q}
             />
 
-            <View className="flex flex-row pt-5 pb-24 justify-center items-center space-x-2 bg-white w-full">
+            <View style={styles.answerContainer}>
               <Pressable
-                className="mt-5 bg-blue-400 active:bg-blue-200 p-2.5 w-44 rounded-full"
+                style={({ pressed }) => [
+                  styles.answerButton,
+                  styles.trueButton,
+                  pressed && styles.trueButtonPressed,
+                ]}
                 onPress={() => onAnswer("True")}
                 disabled={selectedAnswer !== null}
               >
-                <Text className="text-lg text-center text-white">True</Text>
+                <Text style={styles.answerText}>True</Text>
               </Pressable>
 
               <Pressable
-                className="mt-5 bg-red-400 active:bg-red-200 p-2.5 w-44 rounded-full"
+                style={({ pressed }) => [
+                  styles.answerButton,
+                  styles.falseButton,
+                  pressed && styles.falseButtonPressed,
+                ]}
                 onPress={() => onAnswer("False")}
                 disabled={selectedAnswer !== null}
               >
-                <Text className="text-lg text-center text-white">False</Text>
+                <Text style={styles.answerText}>False</Text>
               </Pressable>
             </View>
           </>
@@ -137,14 +145,46 @@ export default function quiz2() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-end", // Align content at the bottom
+    justifyContent: "flex-end",
     padding: 0,
   },
   backgroundImage: {
     flex: 1,
     width: "100%",
     height: "100%",
-    justifyContent: "center", // Center content vertically
+    justifyContent: "center",
+  },
+  answerContainer: {
+    flexDirection: "row",
+    paddingTop: 20,
+    paddingBottom: 96,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "white",
+    width: "100%",
+  },
+  answerButton: {
+    marginTop: 20,
+    padding: 10,
+    width: 176,
+    borderRadius: 50,
+  },
+  trueButton: {
+    backgroundColor: "blue",
+  },
+  trueButtonPressed: {
+    backgroundColor: "lightblue",
+  },
+  falseButton: {
+    backgroundColor: "red",
+  },
+  falseButtonPressed: {
+    backgroundColor: "lightcoral",
+  },
+  answerText: {
+    fontSize: 18,
+    textAlign: "center",
+    color: "white",
   },
 });
 

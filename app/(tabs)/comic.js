@@ -1,5 +1,5 @@
 import { router } from "expo-router";
-import { ScrollView, Image, Text, Pressable } from "react-native";
+import { ScrollView, Image, Text, Pressable, StyleSheet } from "react-native";
 
 const comic = () => {
   const handleBackButton = () => {
@@ -7,20 +7,52 @@ const comic = () => {
   };
 
   return (
-    <ScrollView className="flex bg-black">
+    <ScrollView style={styles.scrollView}>
       <Pressable
-        className="z-50 mx-5 mt-10 bg-white border rounded-full px-3 py-1.5 active:bg-gray-400 duration-100"
+        style={({ pressed }) => [
+          styles.backButton,
+          pressed && styles.backButtonPressed,
+        ]}
         onPress={handleBackButton}
       >
-        <Text className="text-center">Back to home</Text>
+        <Text style={styles.backButtonText}>Back to home</Text>
       </Pressable>
       <Image
         source={require("../../public/comic.png")}
-        className="w-screen h-auto -mt-96"
+        style={styles.comicImage}
         resizeMode="contain"
       />
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  scrollView: {
+    flex: 1,
+    backgroundColor: "black",
+  },
+  backButton: {
+    zIndex: 50,
+    marginHorizontal: 20,
+    marginTop: 40,
+    backgroundColor: "white",
+    borderWidth: 1,
+    borderRadius: 50,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    transitionDuration: "100ms",
+  },
+  backButtonPressed: {
+    backgroundColor: "gray",
+  },
+  backButtonText: {
+    textAlign: "center",
+  },
+  comicImage: {
+    width: "100%",
+    height: "auto",
+    marginTop: -96,
+  },
+});
 
 export default comic;
